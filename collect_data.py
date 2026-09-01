@@ -17,6 +17,16 @@ MY_STATIONS = [
 
 FILE_NAME = "rego_park_station_status.csv"
 
+# Only collect between 7 AM and 10 PM New York time
+now_ny = datetime.now(ZoneInfo("America/New_York"))
+
+if not (7 <= now_ny.hour < 22):
+    print(
+        f"Outside collection window: "
+        f"{now_ny.strftime('%Y-%m-%d %H:%M:%S')}"
+    )
+    raise SystemExit(0)
+
 
 def collect_snapshot():
 
