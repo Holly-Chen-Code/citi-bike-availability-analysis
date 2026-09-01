@@ -1,13 +1,42 @@
 name: Collect Citi Bike Data
 
 on:
-  push:
+  schedule:
+    # GitHub cron uses UTC.
+    # Broad window; Python script decides whether
+    # current New York time is between 7 AM and 10 PM.
+    - cron: "*/5 11-23 * * *"
+    - cron: "*/5 0-2 * * *"
+
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  test:
+  collect:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test
-        run: echo "Hello from GitHub Actions"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Collect station data
+        run: python collect_data.py
+
+      - name: Commit updated CSV
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add rego_park_station_status.csv
+          git diff --cached --quiet || git commit -m "Update Citi Bike station data"
+          git push
