@@ -6,8 +6,8 @@ on:
       - ".github/workflows/collect.yml"
 
   schedule:
-    - cron: "*/5 11-23 * * *"
-    - cron: "*/5 0-2 * * *"
+    - cron: "3,13,23,33,43,53 11-23 * * *"
+    - cron: "3,13,23,33,43,53 0-2 * * *"
 
   workflow_dispatch:
 
